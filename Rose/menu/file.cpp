@@ -1,11 +1,3 @@
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include "file.h"
 
 bool FileMenu::LoadFile = false;
@@ -19,8 +11,8 @@ void FileMenu::DrawMenu()
 {
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("Load",NULL,&LoadFile)){}
-		if (ImGui::MenuItem("Save",NULL,&SaveFile)){}
+		if (ImGui::MenuItem("Load", NULL, &LoadFile)) {}
+		if (ImGui::MenuItem("Save", NULL, &SaveFile)) {}
 		if (ImGui::MenuItem("Save as ...", NULL, &SaveAsFile)) {}
 		ImGui::Separator();
 		if (ImGui::MenuItem("New File", NULL, &NewFile)) {}
@@ -29,11 +21,5 @@ void FileMenu::DrawMenu()
 		if (ImGui::MenuItem("Exit", NULL, &ExitFile)) {}
 
 		ImGui::EndMenu();
-
 	}
-}
-
-void FileMenu::DrawWindow()
-{
-
 }

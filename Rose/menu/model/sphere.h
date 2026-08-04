@@ -13,7 +13,7 @@ public:
 
     void Init();
     void Cleanup();
-    void Draw(Shader& shader, const float color[4], const float rotation[3]);
+    void Draw(Shader& shader, const float color[4], const float rotation[3], bool showMultipleCubes = false);
 
 private:
     unsigned int VAO;
@@ -21,5 +21,5 @@ private:
     unsigned int EBO;
     int indexCount;
 
-    void setupMesh();
+    void SetupMesh();
 };

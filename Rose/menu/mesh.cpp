@@ -12,15 +12,7 @@ float MeshMenu::color[4] = { 0.2f, 0.7f, 0.9f, 1.0f };
 float MeshMenu::rotation[3] = { 0.0f, 0.0f, 0.0f };
 
 Sphere MeshMenu::sphereInstance;
-
-void MeshMenu::Init()
-{
-}
-
-void MeshMenu::Cleanup()
-{
-    ClearBuffers();
-}
+::Cube MeshMenu::cubeInstance;
 
 void MeshMenu::ClearBuffers()
 {
@@ -41,6 +33,10 @@ void MeshMenu::SelectShape(ShapeType type)
     if (type == ShapeType::SPHERE)
     {
         sphereInstance.Init();
+    }
+    else if (type == ShapeType::CUBE)
+    {
+        cubeInstance.Init("20011.jpg");
     }
 }
 
@@ -88,5 +84,9 @@ void MeshMenu::DrawGL(Shader& shader)
     if (currentShape == ShapeType::SPHERE)
     {
         sphereInstance.Draw(shader, color, rotation);
+    }
+    else if (currentShape == ShapeType::CUBE)
+    {
+        cubeInstance.Draw(shader, color, rotation, false);
     }
 }

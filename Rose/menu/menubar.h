@@ -1,16 +1,10 @@
 ﻿#pragma once
 
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "imgui.h"
-
 #include "file.h"
 #include "mesh.h"
+#include "view.h"
 
 struct GLFWwindow;
-
 
 class MenuBar {
 public:

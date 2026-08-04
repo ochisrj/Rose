@@ -40,7 +40,6 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     Yaw += xoffset;
     Pitch += yoffset;
 
-    // ป้องกันไม่ให้กล้องตีลังกาเกิน 89 องศา
     if (constrainPitch)
     {
         if (Pitch > 89.0f)
@@ -63,14 +62,12 @@ void Camera::ProcessMouseScroll(float yoffset)
 
 void Camera::updateCameraVectors()
 {
-    // คำนวณ Direction Vector ใหม่
     glm::vec3 front;
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
     front.y = sin(glm::radians(Pitch));
     front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
     Front = glm::normalize(front);
 
-    // recalculate Right and Up vector
     Right = glm::normalize(glm::cross(Front, WorldUp));
     Up = glm::normalize(glm::cross(Right, Front));
 }

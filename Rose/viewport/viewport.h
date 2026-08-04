@@ -1,18 +1,10 @@
 ﻿#pragma once
 
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "imgui.h"
-
 #include "config_control.h"
+#include "bechmark.h"
 
-struct GLFWwindow;
-
-
-class viewport
+class Viewport
 {
 public:
-	static void DrawWindow(GLFWwindow* window);
+	static void DrawWindow();
 };

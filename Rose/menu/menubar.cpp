@@ -1,20 +1,15 @@
-﻿#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "menubar.h"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+﻿#include "menubar.h"
 
 void MenuBar::Draw(GLFWwindow * window)
 {
     if (ImGui::BeginMainMenuBar())
     {
         FileMenu::DrawMenu();
+        ViewMenu::DrawMenu();
         MeshMenu::DrawMenu();
+
+        ImGui::SameLine();
+        ImGui::Text(" | %.1f FPS", ImGui::GetIO().Framerate);
         ImGui::EndMainMenuBar();
     }
-
-    MeshMenu::DrawWindow();
 }

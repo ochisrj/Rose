@@ -1,25 +1,23 @@
-﻿#include <glad/glad.h>   
+﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <iostream>
+
 #include "menubar.h"
 #include "viewport.h"
 #include "config_control.h"
 #include "cube.h"
-
-#include "stb_image.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "mesh.h"
+#include "view.h"
 #include "shaderclass.h"
 #include "camera.h"
-#include "mesh.h"
-#include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -45,7 +43,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL - Camera & Rotation", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Rose Simulation", nullptr, nullptr);
     if (window == nullptr)
     {
         std::cerr << "Failed to create GLFW window\n";
@@ -61,75 +59,76 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("shaders/shader.vert", "shaders/shader.frag");
-
-    Cube cube;
-    cube.Init("20011.jpg");
-
-    ourShader.use();
-    ourShader.setInt("texture1", 0);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    while (!glfwWindowShouldClose(window))
     {
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        Shader ourShader("shaders/shader.vert", "shaders/shader.frag");
 
-        glfwPollEvents();
-        processInput(window);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        MenuBar::Draw(window);
-        viewport::DrawWindow(window);
-
-        ConfigControl::DrawWindow();
-
-        int currentWidth, currentHeight;
-        glfwGetFramebufferSize(window, &currentWidth, &currentHeight);
-        glViewport(0, 0, currentWidth, currentHeight);
-
-        glClearColor(ConfigControl::clearColor[0], ConfigControl::clearColor[1], ConfigControl::clearColor[2], ConfigControl::clearColor[3]);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (ConfigControl::wireframemode)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        Cube cube;
+        cube.Init("20011.jpg");
 
         ourShader.use();
+        ourShader.setInt("texture1", 0);
+        ourShader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        ourShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-        float currentRotX = ConfigControl::GetCurrentRotX();
-        float currentRotY = ConfigControl::GetCurrentRotY();
-        float currentRotZ = ConfigControl::GetCurrentRotZ();
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
 
-        float aspectRatio = (currentHeight > 0) ? ((float)currentWidth / (float)currentHeight) : 1.0f;
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspectRatio, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
+        while (!glfwWindowShouldClose(window))
+        {
+            float currentFrame = static_cast<float>(glfwGetTime());
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
 
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+            glfwPollEvents();
+            processInput(window);
 
-        cube.Draw(ourShader, currentRotX, currentRotY, currentRotZ, ConfigControl::showMultipleCubes);
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
 
-        MeshMenu::DrawGL(ourShader);
+            MenuBar::Draw(window);
+            Viewport::DrawWindow();
+            ViewMenu::DrawWindow();
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            int currentWidth, currentHeight;
+            glfwGetFramebufferSize(window, &currentWidth, &currentHeight);
+            glViewport(0, 0, currentWidth, currentHeight);
 
-        glfwSwapBuffers(window);
+            glClearColor(ConfigControl::clearColor[0], ConfigControl::clearColor[1], ConfigControl::clearColor[2], ConfigControl::clearColor[3]);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            if (ConfigControl::wireframemode)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            else
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+            float aspectRatio = (currentHeight > 0) ? ((float)currentWidth / (float)currentHeight) : 1.0f;
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspectRatio, 0.1f, 100.0f);
+            glm::mat4 view = camera.GetViewMatrix();
+
+            float rotation[3] = { ConfigControl::GetCurrentRotX(), ConfigControl::GetCurrentRotY(), ConfigControl::GetCurrentRotZ() };
+            float cubeColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+            ourShader.use();
+            ourShader.setMat4("projection", projection);
+            ourShader.setMat4("view", view);
+
+            cube.Draw(ourShader, cubeColor, rotation, ConfigControl::showMultipleCubes);
+
+            MeshMenu::DrawGL(ourShader);
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+            glfwSwapBuffers(window);
+        }
     }
 
     ImGui_ImplOpenGL3_Shutdown();

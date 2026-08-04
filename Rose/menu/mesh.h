@@ -1,12 +1,11 @@
-#pragma once
-#include <iostream>
-#include <vector>
+﻿#pragma once
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "imgui.h"
 #include "shaderclass.h"
 #include "sphere.h"
+#include "cube.h"
 
 enum class ShapeType {
     NONE,
@@ -20,8 +19,6 @@ enum class ShapeType {
 class MeshMenu
 {
 public:
-    static void Init();
-    static void Cleanup();
     static void DrawMenu();
     static void DrawWindow();
     static void DrawGL(Shader& shader);
@@ -41,4 +38,5 @@ private:
     static float rotation[3];
 
     static Sphere sphereInstance;
+    static ::Cube cubeInstance;
 };

@@ -1,14 +1,11 @@
 ﻿#include "config_control.h"
 #include "camera.h"
-#include "mesh.h" // เพิ่ม include mesh.h
+#include "mesh.h"
 #include "imgui.h"
 #include <GLFW/glfw3.h>
 
-// ดึงตัวแปร camera จาก main.cpp มาใช้งานร่วมกัน
 extern Camera camera;
 
-// Initialize static members
-bool ConfigControl::ConfigMenu = false;
 float ConfigControl::clearColor[4] = { 0.10f, 0.10f, 0.12f, 1.0f };
 bool ConfigControl::wireframemode = false;
 bool ConfigControl::showMyWindow = true;
@@ -64,7 +61,7 @@ void ConfigControl::DrawWindow()
     ImGui::Checkbox("Wireframe", &wireframemode);
     ImGui::Checkbox("Show 10 Cubes", &showMultipleCubes);
 
-    static bool vsync = true;
+    static bool vsync = false;
     if (ImGui::Checkbox("Enable VSync", &vsync)) {
         glfwSwapInterval(vsync ? 1 : 0);
     }
@@ -100,7 +97,6 @@ void ConfigControl::DrawWindow()
         camera.Pitch = 0.0f;
     }
 
-    // วาด Shape Customization รวมในหน้าต่างนี้
     MeshMenu::DrawWindow();
 
     ImGui::End();

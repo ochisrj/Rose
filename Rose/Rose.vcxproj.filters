@@ -43,14 +43,14 @@
     <Filter Include="Header Files\viewport">
       <UniqueIdentifier>{7e5b15d7-a444-4f6e-9d22-d9c66da450d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\menu\shape">
-      <UniqueIdentifier>{b7d5f192-7ae4-4947-855b-264d78ff7a8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\menu\shape">
-      <UniqueIdentifier>{a738f071-ef12-4d6e-b0a9-d941ea05f0f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\shaders">
       <UniqueIdentifier>{29c64a4f-11ba-4def-9ddc-ff1295749c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\shape">
+      <UniqueIdentifier>{b7d5f192-7ae4-4947-855b-264d78ff7a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shape">
+      <UniqueIdentifier>{a738f071-ef12-4d6e-b0a9-d941ea05f0f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,20 +81,11 @@
     <ClInclude Include="vendor\imgui\imstb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\EBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\VAO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\VBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render\camera.h">
       <Filter>Header Files\render</Filter>
     </ClInclude>
     <ClInclude Include="menu\model\cube.h">
-      <Filter>Header Files\menu\shape</Filter>
+      <Filter>Header Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="viewport\config_control.h">
       <Filter>Header Files\viewport</Filter>
@@ -108,17 +99,17 @@
     <ClInclude Include="menu\mesh.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="render\model.h">
-      <Filter>Header Files\render</Filter>
-    </ClInclude>
     <ClInclude Include="render\shaderclass.h">
       <Filter>Header Files\render</Filter>
     </ClInclude>
     <ClInclude Include="menu\model\sphere.h">
-      <Filter>Header Files\menu\shape</Filter>
+      <Filter>Header Files\shape</Filter>
     </ClInclude>
-    <ClInclude Include="viewport\viewport.h">
+    <ClInclude Include="viewport\bechmark.h">
       <Filter>Header Files\viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="menu\view.h">
+      <Filter>Header Files\menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -153,7 +144,7 @@
       <Filter>Source Files\viewport</Filter>
     </ClCompile>
     <ClCompile Include="menu\model\cube.cpp">
-      <Filter>Source Files\menu\shape</Filter>
+      <Filter>Source Files\shape</Filter>
     </ClCompile>
     <ClCompile Include="menu\file.cpp">
       <Filter>Source Files\menu</Filter>
@@ -161,17 +152,11 @@
     <ClCompile Include="menu\menubar.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="menu\mesh.cpp">
-      <Filter>Source Files\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="render\model.cpp">
-      <Filter>Source Files\render</Filter>
-    </ClCompile>
     <ClCompile Include="render\shaderclass.cpp">
       <Filter>Source Files\render</Filter>
     </ClCompile>
     <ClCompile Include="menu\model\sphere.cpp">
-      <Filter>Source Files\menu\shape</Filter>
+      <Filter>Source Files\shape</Filter>
     </ClCompile>
     <ClCompile Include="render\stb.cpp">
       <Filter>Source Files\render</Filter>
@@ -182,14 +167,14 @@
     <ClCompile Include="viewport\viewport.cpp">
       <Filter>Source Files\viewport</Filter>
     </ClCompile>
-    <ClCompile Include="src\VBO.cpp">
-      <Filter>Source Files\src</Filter>
+    <ClCompile Include="viewport\benchmark.cpp">
+      <Filter>Source Files\viewport</Filter>
     </ClCompile>
-    <ClCompile Include="src\EBO.cpp">
-      <Filter>Source Files\src</Filter>
+    <ClCompile Include="menu\mesh.cpp">
+      <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="src\VAO.cpp">
-      <Filter>Source Files\src</Filter>
+    <ClCompile Include="menu\view.cpp">
+      <Filter>Source Files\menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,5 +193,6 @@
       <Filter>Resource Files\shaders</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="..\.gitignore" />
   </ItemGroup>
 </Project>

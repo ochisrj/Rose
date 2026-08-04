@@ -15,7 +15,7 @@ void Sphere::Init()
 {
     if (VAO == 0)
     {
-        setupMesh();
+        SetupMesh();
     }
 }
 
@@ -31,7 +31,7 @@ void Sphere::Cleanup()
     }
 }
 
-void Sphere::setupMesh()
+void Sphere::SetupMesh()
 {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
@@ -96,11 +96,12 @@ void Sphere::setupMesh()
     glBindVertexArray(0);
 }
 
-void Sphere::Draw(Shader& shader, const float color[4], const float rotation[3])
+void Sphere::Draw(Shader& shader, const float color[4], const float rotation[3], bool showMultipleCubes)
 {
     if (VAO == 0) return;
 
     shader.use();
+    shader.setInt("useTexture", 0);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));

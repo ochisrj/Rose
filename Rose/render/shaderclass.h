@@ -12,22 +12,17 @@
 class Shader
 {
 public:
-    unsigned int ID; // Shader Program ID
+    unsigned int ID;
 
-    // Constructor อ่านไฟล์และทำการ Build Shader
     Shader(const char* vertexPath, const char* fragmentPath);
 
-    // เปิดใช้งาน Shader
     void use() const;
 
-    // Utility Functions สำหรับส่งค่า Uniforms
-    void setBool(const std::string& name, bool value) const;
     void setInt(const std::string& name, int value) const;
-    void setFloat(const std::string& name, float value) const;
+    void setVec3(const std::string& name, const glm::vec3& value) const;
     void setMat4(const std::string& name, const glm::mat4& mat) const;
 
 private:
-    // ฟังก์ชันช่วยเช็ค Compile / Linking Error
     void checkCompileErrors(GLuint shader, std::string type);
 };
 

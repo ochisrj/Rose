@@ -1,6 +1,6 @@
 #include "cube.h"
 #include "stb_image.h"
-#include <iostream>
+#include <GLFW/glfw3.h>
 
 Cube::Cube() : VAO(0), VBO(0), texture(0)
 {
@@ -18,12 +18,16 @@ Cube::Cube() : VAO(0), VBO(0), texture(0)
 
 Cube::~Cube()
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteTextures(1, &texture);
+    if (glfwGetCurrentContext() != nullptr)
+    {
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteTextures(1, &texture);
+    }
+    VAO = VBO = texture = 0;
 }
 
-void Cube::setupMesh()
+void Cube::SetupMesh()
 {
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -80,11 +84,13 @@ void Cube::setupMesh()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
 }
 
 bool Cube::Init(const char* texturePath)
 {
-    setupMesh();
+    SetupMesh();
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -111,12 +117,13 @@ bool Cube::Init(const char* texturePath)
     return false;
 }
 
-void Cube::Draw(Shader& shader, float rotX, float rotY, float rotZ, bool showMultipleCubes)
+void Cube::Draw(Shader& shader, const float color[4], const float rotation[3], bool showMultipleCubes)
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
     shader.use();
+    shader.setInt("useTexture", 1);
     glBindVertexArray(VAO);
 
     if (showMultipleCubes)
@@ -125,9 +132,9 @@ void Cube::Draw(Shader& shader, float rotX, float rotY, float rotZ, bool showMul
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, glm::radians(rotX), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(rotY + (i * 20.0f)), glm::vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(rotZ), glm::vec3(0.0f, 0.0f, 1.0f));
+            model = glm::rotate(model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(rotation[1] + (i * 20.0f)), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -136,9 +143,9 @@ void Cube::Draw(Shader& shader, float rotX, float rotY, float rotZ, bool showMul
     else
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(rotX), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(rotZ), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
         shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);

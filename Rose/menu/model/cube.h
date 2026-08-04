@@ -12,12 +12,12 @@ public:
     ~Cube();
 
     bool Init(const char* texturePath);
-    void Draw(Shader& shader, float rotX, float rotY, float rotZ, bool showMultipleCubes);
+    void Draw(Shader& shader, const float color[4], const float rotation[3], bool showMultipleCubes);
 
 private:
     unsigned int VAO, VBO;
     unsigned int texture;
     glm::vec3 cubePositions[10];
 
-    void setupMesh();
+    void SetupMesh();
 };
