@@ -6,3 +6,4 @@ public:
 	static void DrawWindow();
 	static void DrawMenu();
 };
+

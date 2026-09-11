@@ -87,9 +87,6 @@
     <ClInclude Include="menu\model\cube.h">
       <Filter>Header Files\shape</Filter>
     </ClInclude>
-    <ClInclude Include="viewport\config_control.h">
-      <Filter>Header Files\viewport</Filter>
-    </ClInclude>
     <ClInclude Include="menu\file.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
@@ -105,11 +102,17 @@
     <ClInclude Include="menu\model\sphere.h">
       <Filter>Header Files\shape</Filter>
     </ClInclude>
+    <ClInclude Include="menu\view.h">
+      <Filter>Header Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="viewport\viewport.h">
+      <Filter>Header Files\viewport</Filter>
+    </ClInclude>
     <ClInclude Include="viewport\bechmark.h">
       <Filter>Header Files\viewport</Filter>
     </ClInclude>
-    <ClInclude Include="menu\view.h">
-      <Filter>Header Files\menu</Filter>
+    <ClInclude Include="viewport\config_control.h">
+      <Filter>Header Files\viewport</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +143,6 @@
     <ClCompile Include="render\camera.cpp">
       <Filter>Source Files\render</Filter>
     </ClCompile>
-    <ClCompile Include="viewport\config_control.cpp">
-      <Filter>Source Files\viewport</Filter>
-    </ClCompile>
     <ClCompile Include="menu\model\cube.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
@@ -167,14 +167,17 @@
     <ClCompile Include="viewport\viewport.cpp">
       <Filter>Source Files\viewport</Filter>
     </ClCompile>
-    <ClCompile Include="viewport\benchmark.cpp">
-      <Filter>Source Files\viewport</Filter>
-    </ClCompile>
     <ClCompile Include="menu\mesh.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
     <ClCompile Include="menu\view.cpp">
       <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="viewport\benchmark.cpp">
+      <Filter>Source Files\viewport</Filter>
+    </ClCompile>
+    <ClCompile Include="viewport\config_control.cpp">
+      <Filter>Source Files\viewport</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

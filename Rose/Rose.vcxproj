@@ -154,6 +154,7 @@
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="viewport\bechmark.h" />
     <ClInclude Include="viewport\config_control.h" />
+    <ClInclude Include="viewport\viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="menu\file.cpp" />
