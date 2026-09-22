@@ -31,8 +31,11 @@
     <Filter Include="Header Files\render">
       <UniqueIdentifier>{967ed5a0-c4cc-419b-ba80-59ccd65822a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\shaders">
+    <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{29c64a4f-11ba-4def-9ddc-ff1295749c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\shaders">
+      <UniqueIdentifier>{da30f772-18d4-4d97-a1c4-ffd60df25264}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,10 +67,19 @@
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="render\camera.h">
-      <Filter>Header Files\render</Filter>
+      <Filter>Source Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="render\shaderclass.h">
-      <Filter>Header Files\render</Filter>
+    <ClInclude Include="shaders\EBO.h">
+      <Filter>Source Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\shaderclass.h">
+      <Filter>Source Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\VAO.h">
+      <Filter>Source Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\VBO.h">
+      <Filter>Source Files\shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,14 +110,23 @@
     <ClCompile Include="render\camera.cpp">
       <Filter>Source Files\render</Filter>
     </ClCompile>
-    <ClCompile Include="render\shaderclass.cpp">
-      <Filter>Source Files\render</Filter>
-    </ClCompile>
     <ClCompile Include="render\stb.cpp">
       <Filter>Source Files\render</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders\shaderclass.cpp">
+      <Filter>Source Files\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders\EBO.cpp">
+      <Filter>Source Files\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders\VAO.cpp">
+      <Filter>Source Files\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders\VBO.cpp">
+      <Filter>Source Files\shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,12 +139,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\shader.frag">
-      <Filter>Resource Files\shaders</Filter>
+      <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shaders\shader.vert">
-      <Filter>Resource Files\shaders</Filter>
+      <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="..\README.md" />
     <None Include="..\.gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>
