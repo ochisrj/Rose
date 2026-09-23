@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="pc_spec.h" />
     <ClInclude Include="render\camera.h" />
     <ClInclude Include="shaders\EBO.h" />
     <ClInclude Include="shaders\shaderclass.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pc_spec.cpp" />
     <ClCompile Include="shaders\EBO.cpp" />
     <ClCompile Include="render\camera.cpp" />
     <ClCompile Include="render\stb.cpp" />
@@ -178,7 +180,7 @@
     <None Include="shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <Text Include="..\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

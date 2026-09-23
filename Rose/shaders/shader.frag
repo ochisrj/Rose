@@ -1,14 +1,13 @@
 #version 330 core
-
-// Outputs colors in RGBA
 out vec4 FragColor;
-
-
-// Inputs the color from the Vertex Shader
 in vec3 color;
-
-
+uniform float time;
 void main()
 {
-	FragColor = vec4(color, 1.0f);
+	vec3 rainbow = vec3(
+		sin(time + color.r * 6.28) * 0.5 + 0.5,
+		sin(time + color.g * 6.28 + 2.0) * 0.5 + 0.5,
+		sin(time + color.b * 6.28 + 4.0) * 0.5 + 0.5
+	);
+	FragColor = vec4(mix(color, rainbow, 0.7), 1.0f);
 }
