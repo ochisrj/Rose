@@ -141,6 +141,7 @@
     <ClInclude Include="shaders\shaderclass.h" />
     <ClInclude Include="shaders\VAO.h" />
     <ClInclude Include="shaders\VBO.h" />
+    <ClInclude Include="texture.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3_loader.h" />
@@ -150,9 +151,11 @@
     <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="vendor\stb\stb_image.h" />
+    <ClInclude Include="vendor\stb\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pc_spec.cpp" />
+    <ClCompile Include="texture.cpp" />
     <ClCompile Include="shaders\EBO.cpp" />
     <ClCompile Include="render\camera.cpp" />
     <ClCompile Include="render\stb.cpp" />
@@ -171,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="20011.jpg" />
+    <Image Include="buu_logo.jpg" />
     <Image Include="CU_sub-logo.png" />
   </ItemGroup>
   <ItemGroup>

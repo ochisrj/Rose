@@ -12,6 +12,13 @@ std::string get_file_contents(const char* filename)
 		in.seekg(0, std::ios::beg);
 		in.read(&contents[0], contents.size());
 		in.close();
+		if (contents.size() >= 3 &&
+			static_cast<unsigned char>(contents[0]) == 0xEF &&
+			static_cast<unsigned char>(contents[1]) == 0xBB &&
+			static_cast<unsigned char>(contents[2]) == 0xBF)
+		{
+			contents.erase(0, 3);
+		}
 		return(contents);
 	}
 	std::cout << "ERROR::SHADER::FILE_NOT_FOUND: " << filename << " errno=" << errno << std::endl;

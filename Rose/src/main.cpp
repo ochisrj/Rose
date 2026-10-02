@@ -10,16 +10,36 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
-
-#include <string>
-#ifdef _WIN32
-#include <windows.h>
-#include <intrin.h>
-#include "imgui_markdown.h"
-#endif
+#include <stb_image.h>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
+
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
+{
+	int image_width = 0;
+	int image_height = 0;
+	int channel = 0;
+
+	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, &channel, 4);
+
+	if (image_data == NULL)
+	{
+		return false;
+	}
+
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+
+	return true;
+};
 
 int main()
 {
@@ -40,29 +60,80 @@ int main()
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glViewport(0, 0, WIDTH, HEIGHT);
-	
+
 	Shader ShaderProgram("shaders/shader.vert", "shaders/shader.frag");
 	GLfloat vertices[] =
 	{
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,     1.0f, 0.0f, 0.0f,
-		 0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,     0.0f, 1.0f, 0.0f,
-		 0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f, 0.0f, 0.0f, 1.0f
+		// positions          // colors           // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
-	
-	GLuint indices[] = { 0, 1, 2 };
-	
+
+	GLuint indices[] =
+	{
+		0, 1, 3,
+		1, 2, 3
+	};
+
 	VAO VAO1;
 	VAO1.Bind();
 	VBO VBO1(vertices, sizeof(vertices));
 	EBO EBO1(indices, sizeof(indices));
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	// Location 0: Position (3 floats)
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+	// Location 1: Color (3 floats)
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	// Location 2: TexCoord (2 floats)
+	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
 	VAO1.UnBind();
 	VBO1.UnBind();
+	EBO1.UnBind(); 
 	
-	EBO1.UnBind();
 	GLuint uniID = glGetUniformLocation(ShaderProgram.ID, "scale");
 	GLuint timeID = glGetUniformLocation(ShaderProgram.ID, "time");
+
+	// Load texture
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = nullptr;
+	const char* texPaths[] = { "20011.jpg", "Rose/20011.jpg", "../Rose/20011.jpg", "shaders/../20011.jpg" };
+	for (const char* p : texPaths)
+	{
+		data = stbi_load(p, &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			std::cout << "Loaded texture: " << p << " " << width << "x" << height << " ch=" << nrChannels << std::endl;
+			break;
+		}
+	}
+	if (data)
+	{
+		GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	}
+	else
+	{
+		std::cout << "Failed to load texture: " << stbi_failure_reason() << std::endl;
+	}
+	stbi_image_free(data);
+
+
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -74,7 +145,7 @@ int main()
 	int major, minor, revision;
 	glfwGetVersion(&major, &minor, &revision);
 	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* renderer = glGetString(GL_RENDERER); 
 	printf("Renderer : %s\n", renderer);
 	printf("GLFW Version: %d.%d.%d\n", major, minor, revision);
 	printf("GLSL Version: %s\n", glslVersion);
@@ -82,20 +153,34 @@ int main()
 	static bool Wireframe_mode = false;
 	static float color[4] = { 0.07f, 0.13f, 0.17f, 1.0f };
 	
+	GLuint my_image_texture = 0;
+	int my_image_width = 0;
+	int my_image_height = 0;
+
+
+
 	while (!glfwWindowShouldClose(window))
 	{
-		if (glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		{
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-		}
+
 		glClearColor(color[0], color[1], color[2], color[3]);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		ShaderProgram.Activate();
-		glUniform1f(uniID, 0.5f);
-		glUniform1f(timeID, (float)glfwGetTime());
-		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
+		// Bind Texture and Shader
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		ShaderProgram.Activate();
+		glUniform1f(uniID, 1.0f);
+		glUniform1f(timeID, (float)glfwGetTime());
+		glUniform1i(glGetUniformLocation(ShaderProgram.ID, "ourTexture"), 0);
+
+		// Draw (6 indices)
+		VAO1.Bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		// Render ImGui ...
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
