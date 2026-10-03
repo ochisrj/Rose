@@ -9,8 +9,9 @@ out vec2 TexCoord;
 
 uniform float scale;
 
-void main() {
+void main() 
+{
     gl_Position = vec4(aPos * scale, 1.0);
     ourColor = aColor;
     TexCoord = aTexCoord;
-}
+}  

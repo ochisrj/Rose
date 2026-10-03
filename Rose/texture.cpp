@@ -4,12 +4,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-GLuint texture(const std::string& filename)
+GLuint Loadtexture(const std::string& filename)
 {
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
+	GLuint Texture;
+	glGenTextures(1, &Texture);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+		
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -19,6 +19,7 @@ GLuint texture(const std::string& filename)
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = nullptr;
 
+	std::string fileStr(filename);
 	std::string texPaths[] =
 	{
 				filename,
@@ -49,10 +50,10 @@ GLuint texture(const std::string& filename)
 	else
 	{
 		std::cout << "Failed to load texture: " << stbi_failure_reason() << std::endl;
-		glDeleteTextures(1, &texture);
+		glDeleteTextures(1, &Texture);
 		return 0;
 	}
 	stbi_image_free(data);
 
-	return texture;
+	return Texture;
 }

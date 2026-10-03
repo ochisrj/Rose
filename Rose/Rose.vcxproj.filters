@@ -81,9 +81,6 @@
     <ClInclude Include="shaders\VBO.h">
       <Filter>Source Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="pc_spec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tranform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -141,6 +141,9 @@
       <Filter>Source Files\shaders</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="tranform.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
   </ItemGroup>

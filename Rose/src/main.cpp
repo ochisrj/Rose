@@ -10,36 +10,16 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "texture.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <stb_image.h>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
-
-bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
-{
-	int image_width = 0;
-	int image_height = 0;
-	int channel = 0;
-
-	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, &channel, 4);
-
-	if (image_data == NULL)
-	{
-		return false;
-	}
-
-	GLuint image_texture;
-	glGenTextures(1, &image_texture);
-	glBindTexture(GL_TEXTURE_2D, image_texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-	return true;
-};
 
 int main()
 {
@@ -95,45 +75,8 @@ int main()
 	
 	GLuint uniID = glGetUniformLocation(ShaderProgram.ID, "scale");
 	GLuint timeID = glGetUniformLocation(ShaderProgram.ID, "time");
-
-	// Load texture
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = nullptr;
-	const char* texPaths[] = { "20011.jpg", "Rose/20011.jpg", "../Rose/20011.jpg", "shaders/../20011.jpg" };
-	for (const char* p : texPaths)
-	{
-		data = stbi_load(p, &width, &height, &nrChannels, 0);
-		if (data)
-		{
-			std::cout << "Loaded texture: " << p << " " << width << "x" << height << " ch=" << nrChannels << std::endl;
-			break;
-		}
-	}
-	if (data)
-	{
-		GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	}
-	else
-	{
-		std::cout << "Failed to load texture: " << stbi_failure_reason() << std::endl;
-	}
-	stbi_image_free(data);
-
-
+	
+	static int myTexture = Loadtexture("buu_logo.jpg");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -169,7 +112,7 @@ int main()
 
 		// Bind Texture and Shader
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, myTexture);
 
 		ShaderProgram.Activate();
 		glUniform1f(uniID, 1.0f);
@@ -204,6 +147,12 @@ int main()
 			}
 			ImGui::ColorEdit4("Background Color", color, ImGuiColorEditFlags_PickerHueBar);
 			ImGui::End();
+		}
+
+		static bool demowindow = true;
+		if (demowindow)
+		{
+			ImGui::ShowDemoWindow();
 		}
 
 		ImGui::Render();

@@ -1,5 +1,4 @@
-#pragma once
 #include <glad/glad.h>
 #include <string>
 
-GLuint texture(const std::string& filename);
+GLuint Loadtexture(const std::string& filename);
