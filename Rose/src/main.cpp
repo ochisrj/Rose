@@ -11,15 +11,75 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "texture.h"
+#include "camera.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include<glm/gtc/type_ptr.hpp>
 
 #include <stb_image.h>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = WIDTH / 2.0f;
+float lastY = HEIGHT / 2.0f;
+bool firstMouse = true;
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	(void)window;
+	glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.WantCaptureMouse || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS)
+	{
+		firstMouse = true;
+		return;
+	}
+	if (firstMouse)
+	{
+		lastX = (float)xpos;
+		lastY = (float)ypos;
+		firstMouse = false;
+	}
+	float xoffset = (float)xpos - lastX;
+	float yoffset = lastY - (float)ypos;
+	lastX = (float)xpos;
+	lastY = (float)ypos;
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	(void)window;
+	(void)xoffset;
+	if (ImGui::GetIO().WantCaptureMouse)
+		return;
+	camera.ProcessMouseScroll((float)yoffset);
+}
+
+void processInput(GLFWwindow* window, float deltaTime)
+{
+	if (ImGui::GetIO().WantCaptureKeyboard) 
+		return;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboard(DOWN, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.ProcessKeyboard(UP, deltaTime);
+}
 
 int main()
 {
@@ -38,8 +98,13 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
 	gladLoadGL();
 	glViewport(0, 0, WIDTH, HEIGHT);
+	glEnable(GL_DEPTH_TEST);
 
 	Shader ShaderProgram("shaders/shader.vert", "shaders/shader.frag");
 	GLfloat vertices[] =
@@ -48,7 +113,7 @@ int main()
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
 	};
 
 	GLuint indices[] =
@@ -62,21 +127,21 @@ int main()
 	VBO VBO1(vertices, sizeof(vertices));
 	EBO EBO1(indices, sizeof(indices));
 
-	// Location 0: Position (3 floats)
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-	// Location 1: Color (3 floats)
 	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	// Location 2: TexCoord (2 floats)
 	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	VAO1.UnBind();
 	VBO1.UnBind();
-	EBO1.UnBind(); 
-	
-	GLuint uniID = glGetUniformLocation(ShaderProgram.ID, "scale");
-	GLuint timeID = glGetUniformLocation(ShaderProgram.ID, "time");
-	
-	static int myTexture = Loadtexture("buu_logo.jpg");
+	EBO1.UnBind();
+
+	GLuint myTexture = Loadtexture("20011.jpg");
+
+	int modelLoc = glGetUniformLocation(ShaderProgram.ID, "model");
+	int viewLoc = glGetUniformLocation(ShaderProgram.ID, "view");
+	int projLoc = glGetUniformLocation(ShaderProgram.ID, "proj");
+	int scaleLoc = glGetUniformLocation(ShaderProgram.ID, "scale");
+	int texLoc = glGetUniformLocation(ShaderProgram.ID, "ourTexture");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -84,76 +149,122 @@ int main()
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
-	
+
 	int major, minor, revision;
 	glfwGetVersion(&major, &minor, &revision);
 	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	const GLubyte* renderer = glGetString(GL_RENDERER); 
+	const GLubyte* renderer = glGetString(GL_RENDERER);
 	printf("Renderer : %s\n", renderer);
 	printf("GLFW Version: %d.%d.%d\n", major, minor, revision);
 	printf("GLSL Version: %s\n", glslVersion);
-	
+
 	static bool Wireframe_mode = false;
+	static bool autoRotate = true;
+	static float rotateSpeed = 20.0f;
 	static float color[4] = { 0.07f, 0.13f, 0.17f, 1.0f };
-	
-	GLuint my_image_texture = 0;
-	int my_image_width = 0;
-	int my_image_height = 0;
 
-
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
 
 	while (!glfwWindowShouldClose(window))
 	{
+		float currentFrame = (float)glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
+		processInput(window, deltaTime);
+
+		int fbWidth, fbHeight;
+		glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+		float aspect = (fbHeight > 0) ? (float)fbWidth / (float)fbHeight : (float)WIDTH / HEIGHT;
 
 		glClearColor(color[0], color[1], color[2], color[3]);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Bind Texture and Shader
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, myTexture);
 
 		ShaderProgram.Activate();
-		glUniform1f(uniID, 1.0f);
-		glUniform1f(timeID, (float)glfwGetTime());
-		glUniform1i(glGetUniformLocation(ShaderProgram.ID, "ourTexture"), 0);
+		glUniform1f(scaleLoc, 1.0f);
+		glUniform1i(texLoc, 0);
 
-		// Draw (6 indices)
+		glm::mat4 model = glm::mat4(1.0f);
+		if (autoRotate)
+			model = glm::rotate(model, glm::radians(rotateSpeed) * currentFrame, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 proj = glm::perspective(glm::radians(camera.Zoom), aspect, 0.1f, 100.0f);
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
 		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		VAO1.UnBind();
 
-		// Render ImGui ...
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		{
 			ImGui::Begin("Properties");
-			ImGui::Text("Renderer: %s",renderer);
-			ImGui::Text("GLFW Version: %d.%d.%d",major,minor,revision);
+			ImGui::Text("Renderer: %s", renderer);
+			ImGui::Text("GLFW Version: %d.%d.%d", major, minor, revision);
 			ImGui::Text("GLSL Version: %s", glslVersion);
 			ImGui::Separator();
 			if (ImGui::Checkbox("Wireframe Mode", &Wireframe_mode))
 			{
-				if (Wireframe_mode)
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				}
-				else
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				}
+				glPolygonMode(GL_FRONT_AND_BACK, Wireframe_mode ? GL_LINE : GL_FILL);
 			}
 			ImGui::ColorEdit4("Background Color", color, ImGuiColorEditFlags_PickerHueBar);
+			ImGui::Separator();
+			ImGui::Text("Camera: W/A/S/D + Q/E, hold Right-Mouse to look, wheel = zoom");
+			ImGui::Text("Pos: %.2f %.2f %.2f", camera.Position.x, camera.Position.y, camera.Position.z);
+			ImGui::Text("Yaw: %.1f Pitch: %.1f Zoom: %.1f", camera.Yaw, camera.Pitch, camera.Zoom);
+			ImGui::Checkbox("Auto rotate", &autoRotate);
+			if (ImGui::Button("Reset camera"))
+				camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 			ImGui::End();
 		}
 
-		static bool demowindow = true;
-		if (demowindow)
+		// 1. Begin the table declaration with a unique identifier, number of columns, and flags
+		if (ImGui::BeginTable("my_table_id", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
 		{
-			ImGui::ShowDemoWindow();
+			// 2. Setup the headers and specifications for each column
+			ImGui::TableSetupColumn("ID");
+			ImGui::TableSetupColumn("Name");
+			ImGui::TableSetupColumn("Action");
+			ImGui::TableHeadersRow(); // Renders the header row based on SetupColumn data
+
+			// 3. Populate rows and columns iteratively
+			for (int row = 0; row < 5; row++)
+			{
+				ImGui::TableNextRow(); // Move down to the next row
+
+				// Column 0: ID
+				ImGui::TableNextColumn(); // Move to the next available column
+				ImGui::Text("%d", row + 1);
+
+				// Column 1: Name
+				ImGui::TableNextColumn();
+				ImGui::Text("Item Name %d", row);
+
+				// Column 2: Action (you can put widgets like buttons inside cells)
+				ImGui::TableNextColumn();
+				ImGui::PushID(row); // Prevent ID conflict for multiple buttons
+				if (ImGui::Button("Delete"))
+				{
+					// Handle delete action
+				}
+				ImGui::PopID();
+			}
+
+			// 4. Always end the table structure
+			ImGui::EndTable();
 		}
+
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

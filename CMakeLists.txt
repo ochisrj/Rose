@@ -41,6 +41,8 @@ endif()
 
 add_executable(Rose
     Rose/src/main.cpp
+    Rose/texture.cpp
+    Rose/tranform.cpp
     Rose/render/camera.cpp
     Rose/render/stb.cpp
     Rose/shaders/shaderclass.cpp
@@ -62,6 +64,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Rose/pc_spec.cpp")
 endif()
 
 target_include_directories(Rose PRIVATE
+    Rose
     Rose/shaders
     Rose/render
     Rose/src
