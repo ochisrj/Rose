@@ -213,7 +213,8 @@ int main()
 			ImGui::Text("Renderer: %s", renderer);
 			ImGui::Text("GLFW Version: %d.%d.%d", major, minor, revision);
 			ImGui::Text("GLSL Version: %s", glslVersion);
-			ImGui::Separator();
+			ImGui::Text("Test on NVIM COLOR YAHOO");
+				ImGui::Separator();
 			if (ImGui::Checkbox("Wireframe Mode", &Wireframe_mode))
 			{
 				glPolygonMode(GL_FRONT_AND_BACK, Wireframe_mode ? GL_LINE : GL_FILL);
@@ -228,43 +229,6 @@ int main()
 				camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 			ImGui::End();
 		}
-
-		// 1. Begin the table declaration with a unique identifier, number of columns, and flags
-		if (ImGui::BeginTable("my_table_id", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-		{
-			// 2. Setup the headers and specifications for each column
-			ImGui::TableSetupColumn("ID");
-			ImGui::TableSetupColumn("Name");
-			ImGui::TableSetupColumn("Action");
-			ImGui::TableHeadersRow(); // Renders the header row based on SetupColumn data
-
-			// 3. Populate rows and columns iteratively
-			for (int row = 0; row < 5; row++)
-			{
-				ImGui::TableNextRow(); // Move down to the next row
-
-				// Column 0: ID
-				ImGui::TableNextColumn(); // Move to the next available column
-				ImGui::Text("%d", row + 1);
-
-				// Column 1: Name
-				ImGui::TableNextColumn();
-				ImGui::Text("Item Name %d", row);
-
-				// Column 2: Action (you can put widgets like buttons inside cells)
-				ImGui::TableNextColumn();
-				ImGui::PushID(row); // Prevent ID conflict for multiple buttons
-				if (ImGui::Button("Delete"))
-				{
-					// Handle delete action
-				}
-				ImGui::PopID();
-			}
-
-			// 4. Always end the table structure
-			ImGui::EndTable();
-		}
-
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

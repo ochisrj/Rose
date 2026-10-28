@@ -41,8 +41,6 @@ endif()
 
 add_executable(Rose
     Rose/src/main.cpp
-    Rose/texture.cpp
-    Rose/tranform.cpp
     Rose/render/camera.cpp
     Rose/render/stb.cpp
     Rose/shaders/shaderclass.cpp
@@ -64,7 +62,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Rose/pc_spec.cpp")
 endif()
 
 target_include_directories(Rose PRIVATE
-    Rose
     Rose/shaders
     Rose/render
     Rose/src
@@ -120,14 +117,6 @@ add_custom_command(TARGET Rose POST_BUILD
         "${CMAKE_CURRENT_SOURCE_DIR}/Rose/shaders/shader.frag"
         "$<TARGET_FILE_DIR:Rose>/shader.frag"
 )
-# Copy texture next to exe so stbi_load("buu_logo.jpg") works from any build dir
-foreach(_tex buu_logo.jpg 20011.jpg CU_sub-logo.png)
-    add_custom_command(TARGET Rose POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/Rose/${_tex}"
-            "$<TARGET_FILE_DIR:Rose>/${_tex}"
-    )
-endforeach()
 
 set_target_properties(Rose PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
